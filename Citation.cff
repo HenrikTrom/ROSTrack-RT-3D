@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Docker-ROS-Online3D-Tracking"
+version: 1.0.0
+doi: 10.5281/zenodo.15526573
+date-released: 2025-05-27
+license: CC0-1.0 
+url: https://github.com/HenrikTrom/Docker-ROS-Online3D-Tracking
+repository-code: https://github.com/HenrikTrom/Docker-ROS-Online3D-Tracking
+abstract: "Docker-Container enabling Real-Time 3D Tracking with ROS and ROS2."
+authors:
+  - family-names: Trommer
+    given-names: Henrik
+    orcid: https://orcid.org/0009-0002-3110-0963
+    affiliation: University of Göttingen
+keywords:
+  - online-3d-tracking
+  - docker
+  - dev-ops
+  - ROS
+  - ROS2
+  - cli tools
+  - open source
+  - research software
