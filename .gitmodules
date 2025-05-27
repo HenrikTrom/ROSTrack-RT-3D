@@ -13,3 +13,6 @@
 [submodule "build/dependencies/flirmulticamera"]
 	path = build/dependencies/flirmulticamera
 	url = git@github.com:HenrikTrom/flirmulticamera.git
+[submodule "workspace/src/real-time-3D-tracking"]
+	path = workspace/src/real-time-3D-tracking
+	url = git@github.com:HenrikTrom/real-time-3D-tracking.git
