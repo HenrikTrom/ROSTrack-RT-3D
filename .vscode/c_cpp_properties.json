@@ -9,9 +9,9 @@
                 "/opt/ros/noetic/include/**",
                 "/opt/spinnaker/include/**",
                 "/opt/modules/tensorrt-cpp-api/include/**",
-                "/opt/modules/cpp-utils/**",
-                "/opt/modules/detection-inference/include/**",
-                "/opt/modules/pose-inference/include/**",
+                "/opt/modules/cpp_utils/**",
+                "/opt/modules/detection_inference/include/**",
+                "/opt/modules/pose_inference/include/**",
                 "/opt/modules/FlirMultiCamera/include/**",
                 "/usr/local/cuda/include/**",
                 "/usr/local/include/cpp_utils/**",
@@ -24,7 +24,8 @@
                 "/usr/include/x86_64-linux-gnu/qt5/**",
                 "/usr/local/include/opencv4",
                 "${workspaceFolder}/workspace/devel/include/**",
-                "${workspaceFolder}/workspace/devel/.private/custom_flir_msgs/include"
+                "${workspaceFolder}/workspace/devel/.private/custom_flir_msgs/include",
+                "${workspaceFolder}/workspace/multi-camera-calibration/src/**"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",

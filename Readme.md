@@ -1,4 +1,4 @@
-# 🐳 Flir-Multi-Camera-ROS
+# 🚀 ROSTrack-RT-3D
 
 [![DOI](https://zenodo.org/badge/991268455.svg)](https://zenodo.org/badge/latestdoi/991268455)
 

@@ -53,27 +53,35 @@ RUN actual_count=$(echo "$FLIR_CAMERA_SERIAL_NUMBERS" | tr ',' '\n' | wc -l) && 
 ################################################################
 # Extra packages
 ################################################################
-RUN apt install -y pybind11-dev
+RUN apt-get update && apt-get install -y \
+    pybind11-dev \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-numpy \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 ################################################################
 # Install Modules
 ################################################################
 
 RUN mkdir /opt/modules
 COPY ./dependencies/Docker-OpenCV-TensorRT-Dev/modules/ /opt/modules/
-WORKDIR /opt/modules/cpp-utils
+WORKDIR /opt/modules/cpp_utils
 RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
 WORKDIR /opt/modules/tensorrt-cpp-api
 RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
-WORKDIR /opt/modules/detection-inference
+WORKDIR /opt/modules/detection_inference
+RUN rm -rf inputs/*.jpg && rm -rf models/*.onnx rm -rf models/*.engine.*
 RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
-WORKDIR /opt/modules/pose-inference
+WORKDIR /opt/modules/pose_inference
+RUN rm -rf inputs/*.jpg && rm -rf models/*.onnx rm -rf models/*.engine.*
 RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
 
 ################################################################
 # Install libflirmulticamera
 ################################################################
-COPY ./dependencies/FlirMultiCamera/ /opt/modules/FlirMultiCamera/
-WORKDIR /opt/modules/FlirMultiCamera
+COPY ./dependencies/flirmulticamera/ /opt/modules/flirmulticamera/
+WORKDIR /opt/modules/flirmulticamera
 RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
 ################################################################
 # Install ROS Noetic
