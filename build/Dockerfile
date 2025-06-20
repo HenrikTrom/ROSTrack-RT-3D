@@ -1,9 +1,102 @@
-ARG BASE_IMAGE=my/opencv-tensorrt-dev
+ARG BASE_IMAGE=ubuntu:20.04
 
 FROM ${BASE_IMAGE}
 
-USER root
+LABEL maintainer="Henrik Trommer <henrik.trommer@uni-goettingen.de>"
 
+SHELL ["/bin/bash","-c"]
+
+# Set system timezone to UTC
+RUN echo 'Etc/UTC' > /etc/timezone && \
+    ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
+    apt-get update && \
+    apt-get install -q -y --no-install-recommends tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install GPG and certificate tools for adding external repositories
+RUN apt update && apt install -q -y --no-install-recommends \
+    dirmngr \
+    gnupg2 \
+    && rm -rf /var/lib/apt/lists/*
+
+################################################################
+# Essential build tools and dependencies
+################################################################
+
+# Install build tools and software properties
+RUN apt update && apt install --no-install-recommends -y \
+    software-properties-common \
+    build-essential
+
+# Install common development libraries and utilities
+RUN apt update --fix-missing && apt install --no-install-recommends -y \
+    wget git bzip2 ca-certificates zlib1g-dev \
+    libncurses5-dev libgdbm-dev libglib2.0-0 libxext6 libsm6 \
+    libxrender1 libffi-dev libusb-1.0-0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install additional helpful CLI tools and math libraries
+RUN apt update && apt install --no-install-recommends -y \
+    tree nano libeigen3-dev
+
+################################################################
+## Python Environment Setup
+################################################################
+
+# Install Python and pip
+RUN apt update && apt install --no-install-recommends -y \
+    python3 \
+    python3-pip
+
+# Install numerical and visualization packages
+RUN pip3 install numpy==1.24.4 
+RUN pip3 install opencv-contrib-python
+
+################################################################
+## X11 and debugging utilities
+################################################################
+
+# Enable X11 forwarding and archive tools
+RUN apt-get update -y && apt-get install -y \
+    x11-apps xauth zip
+
+# Install multimedia, JSON, debugging, and system tools
+RUN apt -y install ffmpeg libavdevice-dev rapidjson-dev gdb
+RUN apt -y install zlib1g unzip mlocate
+RUN apt -y install usbutils pciutils htop iputils-ping
+
+# Install sudo for non-root user
+RUN apt update && apt install --no-install-recommends -y sudo
+
+################################################################
+## CMake Installation (custom version)
+################################################################
+
+ARG CMAKE_VERSION
+ENV CMAKE_VERSION=${CMAKE_VERSION}
+
+# Install custom version of CMake
+RUN apt-get update && apt-get install -y wget curl ca-certificates \
+    && wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.sh \
+    && mkdir /opt/cmake \
+    && sh cmake-${CMAKE_VERSION}-linux-x86_64.sh --skip-license --prefix=/opt/cmake \
+    && ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake \
+    && rm cmake-${CMAKE_VERSION}-linux-x86_64.sh
+
+    
+################################################################
+## Additional variables
+################################################################
+RUN apt -y install libspdlog-dev libfmt-dev 
+ARG OPENCV_VERSION
+ARG UID
+ARG GID
+ARG CPP_OPTIMIZATIONS
+# Export args as environment variables
+ENV OPENCV_VERSION=${OPENCV_VERSION}
+ENV CPP_OPTIMIZATIONS=${CPP_OPTIMIZATIONS}
+
+################################################################
 ## Install: Spinnaker
 ################################################################
 
@@ -60,29 +153,7 @@ RUN apt-get update && apt-get install -y \
     python3-setuptools \
     python3-numpy \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-################################################################
-# Install Modules
-################################################################
 
-RUN mkdir /opt/modules
-COPY ./dependencies/Docker-OpenCV-TensorRT-Dev/modules/ /opt/modules/
-WORKDIR /opt/modules/cpp_utils
-RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
-WORKDIR /opt/modules/tensorrt-cpp-api
-RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
-WORKDIR /opt/modules/detection_inference
-RUN rm -rf inputs/*.jpg && rm -rf models/*.onnx rm -rf models/*.engine.*
-RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
-WORKDIR /opt/modules/pose_inference
-RUN rm -rf inputs/*.jpg && rm -rf models/*.onnx rm -rf models/*.engine.*
-RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
-
-################################################################
-# Install libflirmulticamera
-################################################################
-COPY ./dependencies/flirmulticamera/ /opt/modules/flirmulticamera/
-WORKDIR /opt/modules/flirmulticamera
-RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
 ################################################################
 # Install ROS Noetic
 ################################################################
@@ -123,6 +194,45 @@ RUN apt update && apt install --no-install-recommends -y \
 RUN rosdep init && \
   rosdep update --rosdistro $ROS_DISTRO
 
+RUN pip3 install rospkg
+
+################################################################
+# Install Modules
+################################################################
+
+RUN mkdir /opt/modules
+COPY ./dependencies/cpp_utils/ /opt/modules/cpp_utils/
+WORKDIR /opt/modules/cpp_utils
+RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
+
+################################################################
+# Install libflirmulticamera
+################################################################
+COPY ./dependencies/flirmulticamera/ /opt/modules/flirmulticamera/
+WORKDIR /opt/modules/flirmulticamera
+RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.sh
+
+# Update file search 
+RUN updatedb
+
+## Final Setup: User Environment and Permissions
+################################################################
+
+# Create non-root user with sudo permissions
+COPY ./setup/user.sh /tmp/user.sh
+RUN chmod +x /tmp/user.sh && /tmp/user.sh
+
+# Set default workspace
+WORKDIR /home/docker/workspace
+
+# Add custom shell configuration
+COPY .bashrc /home/docker/.bashrc
+
+RUN groupadd -g $FLIR_GID flirimaging
+# add users to the flirimaging group
+RUN usermod -a -G flirimaging docker
+
+# create catkin ws
 # Create local catkin workspace
 ENV CATKIN_WS=/home/docker/workspace
 ENV ROS_PYTHON_VERSION=3
@@ -133,25 +243,7 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && cd $CATKIN_WS \
     && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO}
 
-RUN pip3 install rospkg
 
-################################################################
-
-# Remove potentially conflicting OpenCV libraries from system
-RUN rm -rf /usr/lib/x86_64-linux-gnu/libopencv*
-RUN rm -rf /usr/lib/x86_64-linux-gnu/cmake/opencv4/
-
-# Update file search database
-RUN updatedb
-
-RUN groupadd -g $FLIR_GID flirimaging
-# add users to the flirimaging group
-RUN usermod -a -G flirimaging docker
-
-# Add custom shell configuration
-COPY .bashrc /home/docker/.bashrc
-
-# # Switch to non-root user
 USER docker
 
 

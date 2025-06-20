@@ -7,8 +7,11 @@
       },
       "includePath": [
         "/opt/ros/noetic/include/**",
+        "/opt/spinnaker/include/**",
         "/home/docker/workspace/workspace/devel/include/**",
         "/home/docker/workspace/workspace/src/ros-node-interface/include/**",
+        "/opt/modules/flirmulticamera/include/**",
+        "/usr/local/include/cpp_utils/**",
         "/usr/include/**"
       ],
       "name": "ROS",

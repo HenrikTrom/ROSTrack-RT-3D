@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+<arg name="ns" default="flir_ros_interface" />
+<arg name="autostart" default="true" />
+<arg name="visualize" default="true" />
+
+<group ns="$(arg ns)">
+
+    <node name="camera" type="interface" pkg="flir_ros_cam" output="screen">
+    </node>
+    <!-- respawn="true" -->
+    <node pkg="rosservice" type="rosservice" name="camera_starter" if="$(arg autostart)" args="call --wait /$(arg ns)/camera/start " />
+
+</group>
+
+</launch>

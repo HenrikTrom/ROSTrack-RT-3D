@@ -1,0 +1,1 @@
+/opt/modules/flirmulticamera/build/record_synchronized_frame ../cfg/CamSettings1024x768.json 

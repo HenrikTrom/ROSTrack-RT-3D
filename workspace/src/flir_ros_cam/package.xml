@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>flir_ros_cam</name>
+  <version>0.0.0</version>
+  <description>The flir_ros_cam package</description>
+
+  <maintainer email="henrik.trommer@uni-goettinen.de">docker</maintainer>
+
+  <license> CC0 1.0 Universal </license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>d
+  <depend>sensor_msgs</depend>
+  <depend>keiko_msgs</depend>
+  <depend>ros_node_interface</depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <exec_depend>roscpp</exec_depend>
+
+  <export>
+
+  </export>
+</package>
