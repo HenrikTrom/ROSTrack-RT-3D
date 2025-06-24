@@ -222,27 +222,28 @@ RUN updatedb
 COPY ./setup/user.sh /tmp/user.sh
 RUN chmod +x /tmp/user.sh && /tmp/user.sh
 
-# Set default workspace
-WORKDIR /home/docker/workspace
-
-# Add custom shell configuration
-COPY .bashrc /home/docker/.bashrc
-
 RUN groupadd -g $FLIR_GID flirimaging
 # add users to the flirimaging group
 RUN usermod -a -G flirimaging docker
 
 # create catkin ws
 # Create local catkin workspace
-ENV CATKIN_WS=/home/docker/workspace
+ENV ROS_WORKSPACE=/home/docker/workspace/workspace
 ENV ROS_PYTHON_VERSION=3
-WORKDIR $CATKIN_WS
+WORKDIR $ROS_WORKSPACE
 
 # Initialize local catkin workspace
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && cd $CATKIN_WS \
+    && cd $ROS_WORKSPACE \
     && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO}
 
+# entrypoint stuff
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Add custom shell configuration
+COPY .bashrc /home/docker/.bashrc
 
 USER docker
 

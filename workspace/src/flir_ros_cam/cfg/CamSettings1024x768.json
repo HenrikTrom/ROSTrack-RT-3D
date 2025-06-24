@@ -1,11 +1,11 @@
 {
     "img_width": 1024,
     "img_height": 768,
-    "fps": 50.0,
+    "fps": 60.0,
     "pixel_format": "RGB8",
     "video_mode": "Mode1",
-    "black_level": 8.0,
-    "gain": 18.0,
+    "black_level": 12.0,
+    "gain": 22.0,
     "exposure_time": 4000.0,
     "binning_vertical": 2,
     "save_dir": "/home/docker/workspace/workspace/src/flir_ros_cam/data"

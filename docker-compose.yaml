@@ -22,7 +22,8 @@ services:
     image: my/${TAG2}
 
     network_mode: host
-    command: tail -f /dev/null
+    # command: tail -f /dev/null
+    command: roslaunch flir_ros_cam interface.launch
     tty: true
   
     environment:
