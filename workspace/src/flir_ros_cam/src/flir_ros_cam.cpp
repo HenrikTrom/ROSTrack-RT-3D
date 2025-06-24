@@ -7,6 +7,14 @@ FlirROSInterfaceModule::FlirROSInterfaceModule(
 {
     this->nh = nh;
     this->type = "FlirROSInterfaceModule";
+    this->compression_params = {cv::IMWRITE_JPEG_QUALITY, COMPRESSION_QUALITY};
+    for (std::size_t i = 0; i<flirmulticamera::GLOBAL_CONST_NCAMS; i++)
+    {
+        this->pubs.at(i) = this->nh.advertise<sensor_msgs::CompressedImage>(
+            std::string(TOPIC_IMAGES)+"/"+std::string(flirmulticamera::GLOBAL_CONST_CAMERA_SERIAL_NUMBERS.at(i))+"/compressed",
+            1
+        );
+    }
 };
 
 bool FlirROSInterfaceModule::start(){
@@ -49,22 +57,29 @@ void FlirROSInterfaceModule::ThreadCamera()
     };
     fcamerahandler.Start();
 
-    // this->stage_publishimages.reset(new stages::PublishImages{this->nh, "images_compressed", 60, 60});
-
     std::array<flirmulticamera::Frame, flirmulticamera::GLOBAL_CONST_NCAMS> frame;
     this->last = std::chrono::steady_clock::now();
-    // this->pub = this->nh.advertise<keiko_msgs::ImgsList>(std::string(TOPIC_IMAGES), 1);
-    this->pub = this->nh.advertise<sensor_msgs::Image>(std::string(TOPIC_IMAGES), 1);
-    while(!this->ShouldClose){
+    while(!this->ShouldClose)
+    {
         if(fcamerahandler.Get(frame))
         {
-            frame_to_msg(frame.at(0), this->msg_img, this->seq);
-            
-            // frames_to_msg(frame, this->msg_imgs, this->seq);
-
-            // publish code
-            // this->pub.publish(this->msg_imgs);
-            this->pub.publish(this->msg_img);
+            for (std::size_t i = 0; i<flirmulticamera::GLOBAL_CONST_NCAMS; i++)
+            {
+                this->cpuImgs.at(i) = cv::Mat(
+                    frame.at(i).frameData->GetHeight(), 
+                    frame.at(i).frameData->GetWidth(), CV_8UC3, 
+                    frame.at(i).frameData->GetData()
+                );
+                cv::cvtColor(cpuImgs.at(i), cpuImgs.at(i), cv::COLOR_RGB2BGR);
+            }
+            for (std::size_t j = 0; j<flirmulticamera::GLOBAL_CONST_NCAMS; j++)
+            {
+                cv::imencode(".jpg", cpuImgs.at(j), 
+                    this->msg_img_c.data, 
+                    this->compression_params
+                );
+                this->pubs.at(j).publish(this->msg_img_c);
+            }
             this->seq++;
             this->now = std::chrono::steady_clock::now();
             this->duration = std::chrono::duration_cast<std::chrono::milliseconds>(this->now - this->last);

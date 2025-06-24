@@ -4,9 +4,11 @@
 #include "ros/ros.h"
 #include "ros-node-interface/interface.hpp"
 #include "keiko_msgs/ImgsList.h"
+#include "keiko_msgs/ImgsListCompressed.h"
 #include "config.h"
 #include <opencv2/core/mat.hpp>
-
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 #include "sys/stat.h"
 // #include "stage_publishimages.hpp"
 
@@ -38,9 +40,9 @@ public:
     double total_t = 0.;
     double steps = 0.;
 
-    ros::Publisher pub;
-    keiko_msgs::ImgsList msg_imgs;
-    sensor_msgs::Image msg_img;
+    std::array<ros::Publisher, flirmulticamera::GLOBAL_CONST_NCAMS> pubs;
+    sensor_msgs::CompressedImage msg_img_c;
+    std::vector<int> compression_params;
 };
 
 bool init_FlirROSInterfaceModule(

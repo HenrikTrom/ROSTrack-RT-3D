@@ -6,7 +6,6 @@
 
 constexpr std::string_view CONFIG_DIR = "/home/docker/workspace/workspace/src/flir_ros_cam/cfg";
 
-constexpr std::string_view RESOURCES_IMAGES = "/home/docker/workspace/workspace/src/flir_ros_cam/cfg/../test/inputs/images";
-constexpr std::string_view RESOURCES_VIDEOS = "/home/docker/workspace/workspace/src/flir_ros_cam/cfg/../test/inputs/videos";
-
 constexpr std::string_view TOPIC_IMAGES = "images";
+
+constexpr int COMPRESSION_QUALITY = 50;

@@ -6,7 +6,6 @@
 
 constexpr std::string_view CONFIG_DIR = "@CONFIG_DIR@";
 
-constexpr std::string_view RESOURCES_IMAGES = "@CONFIG_DIR@/../test/inputs/images";
-constexpr std::string_view RESOURCES_VIDEOS = "@CONFIG_DIR@/../test/inputs/videos";
-
 constexpr std::string_view TOPIC_IMAGES = "images";
+
+constexpr int COMPRESSION_QUALITY = 50;
