@@ -2,7 +2,9 @@
 
 [![DOI](https://zenodo.org/badge/991268455.svg)](https://zenodo.org/badge/latestdoi/991268455)
 
-Docker-Container enabling Real-Time 3D Tracking with ROS and ROS2.
+![rviz](content/out.gif)
+
+Docker-Container enabling real-time 3D multi-object and human tracking with ROS and ROS2.
 
 Writing and designing this project's software was a main focus during my PhD.
 

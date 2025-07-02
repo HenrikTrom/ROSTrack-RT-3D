@@ -123,16 +123,6 @@ RUN apt update && apt install --no-install-recommends -y \
 RUN rosdep init && \
   rosdep update --rosdistro $ROS_DISTRO
 
-# Create local catkin workspace
-ENV CATKIN_WS=/home/docker/workspace
-ENV ROS_PYTHON_VERSION=3
-WORKDIR $CATKIN_WS
-
-# Initialize local catkin workspace
-RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && cd $CATKIN_WS \
-    && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO}
-
 RUN pip3 install rospkg
 
 ################################################################
@@ -141,17 +131,36 @@ RUN pip3 install rospkg
 RUN rm -rf /usr/lib/x86_64-linux-gnu/libopencv*
 RUN rm -rf /usr/lib/x86_64-linux-gnu/cmake/opencv4/
 
-# Update file search database
-RUN updatedb
+## Final Setup: User Environment and Permissions
+################################################################
+
+# Create non-root user with sudo permissions
+COPY ./setup/user.sh /tmp/user.sh
+RUN chmod +x /tmp/user.sh && /tmp/user.sh
 
 RUN groupadd -g $FLIR_GID flirimaging
 # add users to the flirimaging group
 RUN usermod -a -G flirimaging docker
 
+# create catkin ws
+# Create local catkin workspace
+ENV ROS_WORKSPACE=/home/docker/workspace/workspace
+ENV ROS_PYTHON_VERSION=3
+WORKDIR $ROS_WORKSPACE
+
+# Initialize local catkin workspace
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+    && cd $ROS_WORKSPACE \
+    && rosdep install -y --from-paths . --ignore-src --rosdistro ${ROS_DISTRO}
+
+# entrypoint stuff
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Add custom shell configuration
 COPY .bashrc /home/docker/.bashrc
 
-# # Switch to non-root user
 USER docker
 
 

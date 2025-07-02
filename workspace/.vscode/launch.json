@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        
+        {
+            "name": "ROSTrack-Benchmark",
+            "request": "launch",
+            "target": "/home/docker/workspace/workspace/src/real-time-3D-tracking/launch/inference_benchmark.launch",
+            "launch": [
+            ],
+            "type": "ros"
+        },
+        {
+            "name": "ROSTrackOnline",
+            "request": "launch",
+            "target": "/home/docker/workspace/workspace/src/real-time-3D-tracking/launch/interface133.launch",
+            "launch": [
+            ],
+            "type": "ros"
+        }
+    ]
+}

@@ -88,6 +88,19 @@
         "valarray": "cpp",
         "variant": "cpp",
         "__nullptr": "cpp",
-        "filesystem": "cpp"
-    }
+        "filesystem": "cpp",
+        "__node_handle": "cpp",
+        "__split_buffer": "cpp",
+        "__functional_base": "cpp",
+        "__functional_base_03": "cpp",
+        "__hash_table": "cpp",
+        "__tree": "cpp",
+        "__tuple": "cpp"
+    },
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
 }
