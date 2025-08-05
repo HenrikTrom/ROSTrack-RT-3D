@@ -27,7 +27,7 @@ TODO: 4 branches:
 ## Installation
 
 ```bash
-git clone git@github.com:HenrikTrom/Docker-Flir-Multi-Camera.git
+git clone git@github.com:HenrikTrom/ROSTrack-RT-3D.git
 cd Docker-Flir-Multi-Camera
 git submodule update --init --remote --recursive
 ```
@@ -53,9 +53,10 @@ If you want real-time 3D tracking you need:
 
 #### Before building the container:
 
-1. Place the Spinnaker SDK archive (*.tar.gz) in ./build/spinnaker
-2. Download the [TensorRT SDK](https://developer.nvidia.com/tensorrt) archive (*.tar.gz) and place it in `./build/dependencies/Docker-OpenCV-TensorRT-Dev/build/vision_dependencies/tensorrt`. Modify `./build/dependencies/Docker-OpenCV-TensorRT-Dev/build/vision_dependencies/tensorrt/install.sh` so that it matches the archive.
-3. Adapt the `TENSORRT_VERSION` in `.env` and `./build/spinnaker/install_spinnaker.sh` to the correct version
+1. Download and place the Spinnaker SDK archive (*.tar.gz) in ./build/spinnaker. This project has been tested with `spinnaker-2.4.0.143-Ubuntu20.04-amd64-pkg.tar.gz`. If you are using another version, adapt the content of `./build/spinnaker/install_spinnaker.sh` so that it matches the archive.
+2. Download the [TensorRT SDK](https://developer.nvidia.com/tensorrt) archive (*.tar.gz) and place it in `./build/dependencies/Docker-OpenCV-TensorRT-Dev/build/vision_dependencies/tensorrt`. This project has been tested with 10.9.0.34 and 8.6.1.6. 
+3. Modify `./build/dependencies/Docker-OpenCV-TensorRT-Dev/build/vision_dependencies/tensorrt/install.sh` so that it matches the archive. Adapt the `TENSORRT_VERSION` in `.env`. 
+4. If you are using TensorRT 8.x, you have to check out the `legacy-trt8` branch at `./build/dependencies/Docker-OpenCV-TensorRT-Dev/modules/tensorrt-cpp-api`. If you are using TensorRT 10.x use the `main` branch.
 4. Adapt other parameters in your .env file i.e. Serial numbers of your cameras, Master-Slave Trigger lines etc.
 5. Add these environment variables to your system (**If you are using zsh, modify the code.**)
 ```bash
@@ -63,8 +64,13 @@ echo 'export ROS_MASTER_URI=<ip-of-ros-master>' >> ~/.bashrc
 echo 'export ROS_IP=<your-ip-(ifconfig)>' >> ~/.bashrc
 source ~/.bashrc
 ```
+6. **For Developers:** Activate the lines `` and `` in `docker-compose.yaml` and add your github authentification file by adding these lines to your bashrc/zshrc/etc.
+```bash
+eval `ssh-agent -s`
+ssh-add ~/.ssh/id_ed25519_flirctrl
+```
 
-### Build and run the container(s)
+### Build and run the containers
 ```bash
 docker compose --profile build-only build # build the base container
 docker compose build # builds the main container
@@ -77,6 +83,6 @@ docker compose up -d # launches the main container as background process
 ```
 
 ### 🧪 Tested with
-* TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz on NVIDIA GTX 2080 Super on Ubuntu 20.04, 22.04
-* TensorRT-10.9.0.34.Linux.x86_64-gnu.cuda-12.8.tar.gz on NVIDIA RTX 4070 Super on Ubuntu 20.04,22.04
+* TensorRT-10.9.0.34.Linux.x86_64-gnu.cuda-12.8.tar.gz on NVIDIA RTX 4070 Super on Ubuntu 22.04 with spinnaker 
+* TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz on NVIDIA GTX 2080 Super on Ubuntu 20.04 with spinnaker-2.4.0.143-Ubuntu20.04
 * OpenCV 10.0.0
