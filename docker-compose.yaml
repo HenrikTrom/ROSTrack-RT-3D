@@ -41,12 +41,12 @@ services:
       COLORTERM: truecolor
       ROS_MASTER_URI: "http://${ROS_MASTER_URI}:11311"
       ROS_IP: "${ROS_IP}"
-      SSH_AUTH_SOCK: /ssh-agent
+      # SSH_AUTH_SOCK: /ssh-agent # for github dev
     volumes: 
       - ./:/home/docker/workspace
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      - $SSH_AUTH_SOCK:/ssh-agent  # Forward SSH socket
+      # - $SSH_AUTH_SOCK:/ssh-agent  # Forward SSH socket
 
     devices:
       - /dev/bus/usb:/dev/bus/usb
