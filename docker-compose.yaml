@@ -37,6 +37,8 @@ services:
     volumes: 
       - ./:/home/docker/workspace
       - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
       - $SSH_AUTH_SOCK:/ssh-agent  # Forward SSH socket
 
     devices:
