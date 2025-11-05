@@ -70,45 +70,47 @@ RUN rm -rf build; mkdir build && chmod +x ./build_install.sh && ./build_install.
 ################################################################
 # Install ROS Noetic
 ################################################################
-# setup keys
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl gnupg2 ca-certificates lsb-release && \
+    rm -rf /var/lib/apt/lists/*
 
-# setup sources.list
-RUN echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros1-latest.list
 
-# setup environment
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV ROS_DISTRO noetic
+# Add ROS key to a dedicated keyring (no apt-key)
+RUN curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+    | gpg --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
 
-RUN apt update && apt install --no-install-recommends -y \
-    software-properties-common \
-    build-essential
-RUN add-apt-repository universe
 
-# Install ros packages but build cv-bridge from source! to use correct opencv version
-RUN apt update && apt install --no-install-recommends -y \
+# Add ROS repository with signed-by pinning
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+http://packages.ros.org/ros/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+    > /etc/apt/sources.list.d/ros1-latest.list
+
+# Environment
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 ROS_DISTRO=noetic
+
+# Base build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    software-properties-common build-essential && \
+    add-apt-repository universe && \
+    rm -rf /var/lib/apt/lists/*
+
+# Core ROS (pin exact versions if you need reproducibility)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-noetic-ros-core=1.5.0-1* \
-    ros-noetic-ros-base=1.5.0-1*
+    ros-noetic-ros-base=1.5.0-1* && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt update && apt install --no-install-recommends -y \
-    python3-rosdep \
-    python3-rosinstall \
-    python3-vcstools \
-    python3-catkin-tools \
-    ros-noetic-tf \
-    ros-noetic-image-exposure-msgs \
-    ros-noetic-camera-info-manager \
-    ros-noetic-image-transport \
-    ros-noetic-roslint \
-    ros-noetic-image-proc
+# Utilities
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-rosdep python3-rosinstall python3-vcstools python3-catkin-tools \
+    ros-noetic-tf ros-noetic-image-exposure-msgs ros-noetic-camera-info-manager \
+    ros-noetic-image-transport ros-noetic-roslint ros-noetic-image-proc && \
+    rm -rf /var/lib/apt/lists/*
 
-# bootstrap rosdep
-RUN rosdep init && \
-  rosdep update --rosdistro $ROS_DISTRO
+# rosdep
+RUN rosdep init && rosdep update --rosdistro $ROS_DISTRO
 
-RUN pip3 install rospkg
-
+RUN pip3 install --no-cache-dir rospkg
 ################################################################
 
 # Remove potentially conflicting OpenCV libraries from system

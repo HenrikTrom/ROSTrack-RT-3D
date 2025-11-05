@@ -28,7 +28,7 @@ TODO: 4 branches:
 
 ```bash
 git clone git@github.com:HenrikTrom/ROSTrack-RT-3D.git
-cd Docker-Flir-Multi-Camera
+cd ROSTrack-RT-3D
 git submodule update --init --remote --recursive
 ```
 
