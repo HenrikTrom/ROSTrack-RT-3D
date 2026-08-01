@@ -27,7 +27,7 @@ TODO: 4 branches:
 ## Installation
 
 ```bash
-git clone git@github.com:HenrikTrom/ROSTrack-RT-3D.git
+git clone https://github.com/HenrikTrom/ROSTrack-RT-3D.git
 cd ROSTrack-RT-3D
 git submodule update --init --remote --recursive
 ```
