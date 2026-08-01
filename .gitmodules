@@ -1,21 +1,21 @@
 [submodule "workspace/src/ros-node-interface"]
 	path = workspace/src/ros-node-interface
-	url = git@github.com:HenrikTrom/ros-node-interface.git
+	url = https://github.com/HenrikTrom/ros-node-interface.git
 [submodule "workspace/src/flir_icp_calib"]
 	path = workspace/src/flir_icp_calib
-	url = git@github.com:HenrikTrom/flir_icp_calib.git
+	url = https://github.com/HenrikTrom/flir_icp_calib.git
 [submodule "workspace/src/keiko_msgs"]
 	path = workspace/src/keiko_msgs
-	url = git@github.com:HenrikTrom/keiko_msgs.git
+	url = https://github.com/HenrikTrom/keiko_msgs.git
 [submodule "build/dependencies/Docker-OpenCV-TensorRT-Dev"]
 	path = build/dependencies/Docker-OpenCV-TensorRT-Dev
-	url = https://github.com/HenrikTrom/Docker-OpenCV-TensorRT-Dev
+	url = https://github.com/HenrikTrom/Docker-OpenCV-TensorRT-Dev.git
 [submodule "build/dependencies/flirmulticamera"]
 	path = build/dependencies/flirmulticamera
-	url = git@github.com:HenrikTrom/flirmulticamera.git
+	url = https://github.com/HenrikTrom/flirmulticamera.git
 [submodule "workspace/src/real-time-3D-tracking"]
 	path = workspace/src/real-time-3D-tracking
-	url = git@github.com:HenrikTrom/real-time-3D-tracking.git
+	url = https://github.com/HenrikTrom/real-time-3D-tracking.git
 [submodule "workspace/multi-camera-calib"]
 	path = workspace/multi-camera-calib
-	url = git@github.com:HenrikTrom/multi-camera-calib.git
+	url = https://github.com/HenrikTrom/multi-camera-calib.git
