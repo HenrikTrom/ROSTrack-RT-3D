@@ -102,5 +102,6 @@
     ],
     "python.analysis.extraPaths": [
         "/opt/ros/noetic/lib/python3/dist-packages"
-    ]
+    ],
+    "cmake.sourceDirectory": "/home/henrik/Documents/ROSTrack-RT-3D/workspace/multi-camera-calib"
 }
