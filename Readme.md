@@ -1,4 +1,4 @@
-# 🚀 ROSTrack-RT-3D
+# ROSTrack-RT-3D
 
 [![DOI](https://zenodo.org/badge/991268455.svg)](https://zenodo.org/badge/latestdoi/991268455)
 
@@ -83,4 +83,5 @@ docker compose up -d # launches the main container as background process
 
 ### Workflow Schematic
 
-![Schematic](content/ImprovingDetection.gif)
+![Schematic](content/ImprovingDetection.png)
+
