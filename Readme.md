@@ -70,10 +70,102 @@ docker compose build # builds the main container
 docker compose up -d # launches the main container as background process
 ```
 
-### Executables
+
+## Calibration
+
+Accurate 3D reconstruction requires calibrated cameras.
+
+### 1. Multi-camera calibration
+
+Calibrate the intrinsic and extrinsic parameters of the camera system using:
+
+[multi-camera-calib](https://github.com/HenrikTrom/multi-camera-calib)
+
+The resulting calibration describes the geometry of the multi-camera system and is required for triangulation.
+
+### 2. Camera-to-robot calibration
+
+For applications where tracking results must be expressed relative to a robot, the camera system can additionally be registered to the robot base frame using:
+
+[flir_icp_calib](https://github.com/HenrikTrom/flir_icp_calib)
+
+This step is optional for camera-only 3D tracking.
+
+---
+
+## Usage
+
+### 133-keypoint human tracking
+
+Launch the human pose tracking interface with:
+
 ```bash
-# TODO
+roslaunch real_time_3d_tracking interface133.launch
 ```
+
+This starts the `interface_133` executable.
+
+The default namespace is:
+
+```text
+/flir_ros_interface
+```
+
+and the launch file automatically calls the tracker's `start` service.
+
+To disable automatic startup:
+
+```bash
+roslaunch real_time_3d_tracking interface133.launch autostart:=false
+```
+
+### Color tracking
+
+Launch the color-tracking pipeline with:
+
+```bash
+roslaunch real_time_3d_tracking interface_color.launch
+```
+
+This starts the `interface_color` executable.
+
+---
+
+## Online and Offline Operation
+
+The tracker supports two input modes.
+
+### Online
+
+In online mode, synchronized frames are acquired directly from the FLIR camera system:
+
+```text
+FLIR cameras
+     ↓
+FlirCameraHandler
+     ↓
+GPU upload
+     ↓
+Detection
+     ↓
+Tracking
+```
+
+Camera parameters are loaded through the configured multi-camera settings.
+
+### Offline
+
+When online mode is disabled, the tracker reads synchronized video streams from:
+
+```text
+test/inputs/videos/
+```
+
+The videos are associated with individual cameras using their serial numbers.
+
+This mode is useful for development, debugging, and reproducible experiments without requiring access to the physical camera system.
+
+---
 
 ### 🧪 Tested with
 * TensorRT-10.9.0.34.Linux.x86_64-gnu.cuda-12.8.tar.gz on NVIDIA RTX 4070 Super on Ubuntu 22.04 with spinnaker 
