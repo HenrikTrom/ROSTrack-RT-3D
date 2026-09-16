@@ -17,13 +17,6 @@ Writing and designing this project's software was a main focus during my PhD.
 
 If you use this software, please use the GitHub **“Cite this repository”** button at the top(-right) of this page.
 
-TODO: 4 branches: 
-
-- [] NOETIC: cam-only
-- [] NOETIC: trt-online-tracking
-- [] HUBLE: ros
-- [] HUMBLE: trt-online-tracking
-
 ## Installation
 
 ```bash
@@ -86,3 +79,8 @@ docker compose up -d # launches the main container as background process
 * TensorRT-10.9.0.34.Linux.x86_64-gnu.cuda-12.8.tar.gz on NVIDIA RTX 4070 Super on Ubuntu 22.04 with spinnaker 
 * TensorRT-8.6.1.6.Linux.x86_64-gnu.cuda-11.8.tar.gz on NVIDIA GTX 2080 Super on Ubuntu 20.04 with spinnaker-2.4.0.143-Ubuntu20.04
 * OpenCV 10.0.0
+
+
+### Workflow Schematic
+
+![Schematic](content/ImprovingDetection.gif)
